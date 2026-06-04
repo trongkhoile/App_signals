@@ -1,0 +1,225 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-buy: var(--buy);
+  --color-sell: var(--sell);
+  --color-neutral: var(--neutral);
+  --color-cyan: var(--cyan);
+  --color-violet: var(--violet);
+  --font-display: "Bebas Neue", "Space Grotesk", system-ui, sans-serif;
+  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+:root {
+  --radius: 0.25rem;
+  /* Deep ink with electric accents — distinctive editorial palette */
+  --background: oklch(0.15 0.025 260);
+  --foreground: oklch(0.96 0.01 220);
+  --card: oklch(0.19 0.028 260);
+  --card-foreground: oklch(0.96 0.01 220);
+  --popover: oklch(0.19 0.028 260);
+  --popover-foreground: oklch(0.96 0.01 220);
+  --primary: oklch(0.86 0.17 200);
+  --primary-foreground: oklch(0.14 0.02 240);
+  --secondary: oklch(0.24 0.03 260);
+  --secondary-foreground: oklch(0.96 0.01 220);
+  --muted: oklch(0.22 0.025 260);
+  --muted-foreground: oklch(0.70 0.025 240);
+  --accent: oklch(0.28 0.05 280);
+  --accent-foreground: oklch(0.96 0.01 220);
+  --destructive: oklch(0.66 0.24 22);
+  --destructive-foreground: oklch(0.98 0.01 230);
+  --border: oklch(0.32 0.04 250 / 0.55);
+  --input: oklch(0.26 0.03 260);
+  --ring: oklch(0.86 0.17 200);
+
+  --buy: oklch(0.82 0.22 152);     /* mint-green */
+  --sell: oklch(0.66 0.26 18);     /* coral red */
+  --neutral: oklch(0.82 0.16 80);  /* amber */
+  --cyan: oklch(0.86 0.17 200);    /* electric cyan */
+  --violet: oklch(0.68 0.24 295);  /* electric violet */
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  html, body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+  }
+  body {
+    background-image:
+      radial-gradient(ellipse 60% 40% at 85% 0%, oklch(0.35 0.18 295 / 0.18), transparent 65%),
+      radial-gradient(ellipse 50% 40% at 0% 100%, oklch(0.40 0.18 200 / 0.15), transparent 60%),
+      linear-gradient(180deg, oklch(0.16 0.025 260), oklch(0.13 0.025 265));
+  }
+}
+
+@layer utilities {
+  .font-display { font-family: var(--font-display); letter-spacing: 0.01em; }
+  .font-mono { font-family: var(--font-mono); }
+
+  .glow-cyan   { box-shadow: 0 0 0 1px oklch(0.86 0.17 200 / 0.35), 0 0 40px oklch(0.86 0.17 200 / 0.22); }
+  .glow-buy    { box-shadow: 0 0 0 1px var(--buy),  0 0 50px oklch(0.82 0.22 152 / 0.32); }
+  .glow-sell   { box-shadow: 0 0 0 1px var(--sell), 0 0 60px oklch(0.66 0.26 18 / 0.40); }
+  .glow-neutral{ box-shadow: 0 0 0 1px var(--neutral), 0 0 35px oklch(0.82 0.16 80 / 0.25); }
+  .glow-violet { box-shadow: 0 0 0 1px var(--violet), 0 0 35px oklch(0.68 0.24 295 / 0.32); }
+
+  .text-glow { text-shadow: 0 0 14px currentColor, 0 0 30px currentColor; }
+  .text-glow-soft { text-shadow: 0 0 10px currentColor; }
+
+  .grid-bg {
+    background-image:
+      linear-gradient(oklch(0.86 0.17 200 / 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, oklch(0.86 0.17 200 / 0.045) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: -1px -1px;
+  }
+
+  .scanlines::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 3px,
+      oklch(1 0 0 / 0.015) 3px,
+      oklch(1 0 0 / 0.015) 4px
+    );
+    pointer-events: none;
+  }
+
+  /* Animated marquee for the ticker */
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  .animate-marquee { animation: marquee 40s linear infinite; }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+  }
+  .animate-pulse-dot { animation: pulse-dot 1.4s ease-in-out infinite; }
+
+  /* ─── QiPrime Light-Tech background ──────────────────────────────────── */
+  .qi-tech-bg {
+    position: relative;
+    background-color: #F4F6F8;
+    background-image:
+      radial-gradient(ellipse 55% 38% at 88% -5%,  rgba(37,99,235,0.10),  transparent 60%),
+      radial-gradient(ellipse 50% 40% at -5% 105%, rgba(124,58,237,0.09), transparent 60%),
+      radial-gradient(ellipse 40% 30% at 50% 50%,  rgba(15,174,107,0.05), transparent 70%),
+      linear-gradient(rgba(37,99,235,0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(37,99,235,0.045) 1px, transparent 1px);
+    background-size: auto, auto, auto, 44px 44px, 44px 44px;
+    background-position: 0 0, 0 0, 0 0, -1px -1px, -1px -1px;
+    overflow-x: hidden;
+  }
+  .qi-tech-bg::before,
+  .qi-tech-bg::after {
+    content: "";
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.55;
+  }
+  .qi-tech-bg::before {
+    width: 480px; height: 480px;
+    top: -120px; right: -120px;
+    background: radial-gradient(circle, rgba(37,99,235,0.35), transparent 70%);
+    animation: qi-float-a 18s ease-in-out infinite;
+  }
+  .qi-tech-bg::after {
+    width: 520px; height: 520px;
+    bottom: -160px; left: -140px;
+    background: radial-gradient(circle, rgba(124,58,237,0.28), transparent 70%);
+    animation: qi-float-b 22s ease-in-out infinite;
+  }
+  .qi-tech-bg > * { position: relative; z-index: 1; }
+
+  @keyframes qi-float-a {
+    0%, 100% { transform: translate(0,0) scale(1); }
+    50%      { transform: translate(-40px, 60px) scale(1.08); }
+  }
+  @keyframes qi-float-b {
+    0%, 100% { transform: translate(0,0) scale(1); }
+    50%      { transform: translate(50px, -40px) scale(1.1); }
+  }
+
+  /* Typography accents */
+  .qi-display {
+    font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+    font-feature-settings: "ss01", "tnum";
+  }
+  .qi-mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-feature-settings: "tnum"; }
+  .qi-eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    font-weight: 700;
+  }
+  .qi-signal-text {
+    background-image: linear-gradient(135deg, currentColor 0%, currentColor 55%, rgba(255,255,255,0.55) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 6px 18px rgba(0,0,0,0.08));
+  }
+
+  @keyframes qi-shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  .qi-live-pill {
+    position: relative;
+    overflow: hidden;
+  }
+  .qi-live-pill::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(37,99,235,0.12), transparent);
+    background-size: 200% 100%;
+    animation: qi-shimmer 3.2s linear infinite;
+    pointer-events: none;
+  }
+
+  .qi-metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(16,24,40,0.08), 0 2px 6px rgba(37,99,235,0.08);
+    border-color: rgba(37,99,235,0.25) !important;
+  }
+}
