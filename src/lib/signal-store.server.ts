@@ -1,4 +1,6 @@
-// In-memory latest-signal store (single Worker instance demo).
+// In-memory latest-signal store with ATR-based dynamic TP/SL
+import ATRBasedTPSL from './atr-based-tpsl';
+
 export type LockedTpsl = { sl: number; tp1: number; tp2: number };
 
 export type Signal = {
@@ -29,11 +31,35 @@ export type Signal = {
   lockedTpsl?: LockedTpsl | null;
 };
 
-const SL_DIST  = 5.0;
-const TP1_DIST = 5.0;
-const TP2_DIST = 10.0;
+// Fallback for legacy code (rarely used now)
+const SL_DIST_LEGACY  = 5.0;
+const TP1_DIST_LEGACY = 5.0;
+const TP2_DIST_LEGACY = 10.0;
+
+// ATR-based TP/SL calculator
+const tpslCalculator = new ATRBasedTPSL();
 
 let latestSignals: Map<string, Signal> = new Map();
+
+/**
+ * Estimate ATR from signal metrics (simplified)
+ * In production, fetch from klines data
+ */
+function estimateATRFromMetrics(metrics: Signal['metrics'], symbol: string): number {
+  // Fallback ATR estimates by symbol
+  const defaultATRs: Record<string, number> = {
+    BTCUSDT: 250,
+    ETHUSDT: 200,
+    BNBUSDT: 100,
+    XAUUSD: 12,
+    EURUSD: 80,
+    GBPUSD: 100,
+  };
+
+  // TODO: In production, calculate real ATR from klines
+  // For now, return a reasonable estimate
+  return defaultATRs[symbol] || 150;
+}
 
 export function setLatestSignal(s: Signal) {
   const key = `${s.symbol ?? "UNKNOWN"}:${s.execution_timeframe ?? "M15"}`;
@@ -49,13 +75,24 @@ export function setLatestSignal(s: Signal) {
     // Signal still active — keep the original lock unchanged
     lockedTpsl = prev.lockedTpsl;
   } else {
-    // First tick of a new active signal — lock TP/SL from entry price
+    // First tick of a new active signal — lock TP/SL using ATR-based calculation
     const entry = s.price?.current;
     if (entry) {
       const direction = s.label === "BUY NOW" ? "BUY" : "SELL";
-      lockedTpsl = direction === "BUY"
-        ? { sl: entry - SL_DIST, tp1: entry + TP1_DIST, tp2: entry + TP2_DIST }
-        : { sl: entry + SL_DIST, tp1: entry - TP1_DIST, tp2: entry - TP2_DIST };
+      const symbol = s.symbol ?? "BTCUSDT";
+      const timeframe = s.execution_timeframe ?? "H1";
+
+      // Estimate ATR (TODO: get from actual klines)
+      const atr = estimateATRFromMetrics(s.metrics, symbol);
+
+      // Calculate optimal TP/SL using ATR-based ratios
+      const tpslResult = tpslCalculator.calculateTPSL(entry, atr, timeframe, symbol, direction);
+
+      lockedTpsl = {
+        sl: tpslResult.sl,
+        tp1: tpslResult.tp1,
+        tp2: tpslResult.tp2
+      };
     }
   }
 
