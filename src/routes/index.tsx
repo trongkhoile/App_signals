@@ -599,9 +599,9 @@ function QiPrimeDashboard() {
 
             {/* AI Score Breakdown moved here for vertical balance */}
             <Section title={`AI SCORE BREAKDOWN — ${score.ai_score}/100`}>
-              <ScoreBar label="L2 · RSI Momentum" score={bd.l2 ?? 0} max={20} color={C.accent} />
-              <ScoreBar label="L3 · Stochastic Trigger" score={bd.l3 ?? 0} max={30} color={C.amber} />
-              <ScoreBar label="L4 · Flow / Delta / Power" score={bd.l4 ?? 0} max={40} color={sigColor} />
+              <ScoreBar label="L2 · RSI Momentum" score={bd.l2 ?? 0} max={35} color={C.accent} />
+              <ScoreBar label="L3 · Stochastic Trigger" score={bd.l3 ?? 0} max={40} color={C.amber} />
+              <ScoreBar label="L4 · Flow / Delta / Power" score={bd.l4 ?? 0} max={25} color={sigColor} />
               <div style={{ marginTop: 12, borderTop: `1px solid ${C.borderSoft}`, paddingTop: 10 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
                   <span style={{ color: C.text, fontWeight: 700, fontSize: 12 }}>TOTAL</span>
