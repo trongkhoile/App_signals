@@ -68,7 +68,7 @@ const C = {
 };
 
 // ─── CIRCULAR GAUGE (Light) ──────────────────────────────────────────────────
-function CircularGauge({ score, maxScore = 90, color }: { score: number; maxScore?: number; color: string }) {
+function CircularGauge({ score, maxScore = 100, color }: { score: number; maxScore?: number; color: string }) {
   const size = 180, r = 76, cx = size / 2, cy = size / 2;
   const circumference = 2 * Math.PI * r;
   const pct = Math.min(score / maxScore, 1);
@@ -208,7 +208,7 @@ const DISPLAY_MAP: Record<string, string> = {
   ETHUSDT: "ETH",
   XAUUSD: "XAUUSD",
 };
-const TIMEFRAMES = ["M5", "M15", "H1", "H4"];
+const TIMEFRAMES = ["M15", "H1", "H4"];
 
 function QiPrimeDashboard() {
   const [data, setData]           = useState<any>(DEMO_DATA);
@@ -308,7 +308,7 @@ function QiPrimeDashboard() {
 
     const asset = data.instrument?.symbol ?? symbol ?? "N/A";
     const tf = data.instrument?.execution_timeframe ?? timeframe ?? "N/A";
-    const entry = data.price?.current;
+    const entry = score?.lockedEntry ?? data.price?.current;
     const fmt = (value: number | null | undefined) =>
       typeof value === "number" ? value.toFixed(2) : "N/A";
 
@@ -453,18 +453,22 @@ function QiPrimeDashboard() {
                 Copy Signal
               </button>
             </div>
-            <div style={{ marginTop: 16, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, background: "rgba(0,0,0,0.02)", padding: 12, borderRadius: 8, border: `1px solid ${C.borderSoft}` }}>
-              <div>
+            <div className="grid grid-cols-2 md:grid-cols-4" style={{ marginTop: 16, gap: 12, background: "rgba(0,0,0,0.02)", padding: 12, borderRadius: 8, border: `1px solid ${C.borderSoft}` }}>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ color: C.textMuted, fontSize: 10, fontWeight: 800, marginBottom: 4 }}>ENTRY</div>
+                <div style={{ color: "#0369a1", fontSize: "clamp(13px, 3.5vw, 18px)", fontWeight: 800 }}>{score?.lockedEntry?.toFixed(2) ?? "N/A"}</div>
+              </div>
+              <div style={{ textAlign: "center" }}>
                 <div style={{ color: C.textMuted, fontSize: 10, fontWeight: 800, marginBottom: 4 }}>STOP LOSS</div>
-                <div style={{ color: C.sell, fontSize: 18, fontWeight: 800 }}>{tpsl.sl?.toFixed(2) ?? "N/A"}</div>
+                <div style={{ color: C.sell, fontSize: "clamp(13px, 3.5vw, 18px)", fontWeight: 800 }}>{tpsl.sl?.toFixed(2) ?? "N/A"}</div>
               </div>
-              <div>
+              <div style={{ textAlign: "center" }}>
                 <div style={{ color: C.textMuted, fontSize: 10, fontWeight: 800, marginBottom: 4 }}>TP 1 (1:1)</div>
-                <div style={{ color: C.buy, fontSize: 18, fontWeight: 800 }}>{tpsl.tp1?.toFixed(2) ?? "N/A"}</div>
+                <div style={{ color: C.buy, fontSize: "clamp(13px, 3.5vw, 18px)", fontWeight: 800 }}>{tpsl.tp1?.toFixed(2) ?? "N/A"}</div>
               </div>
-              <div>
+              <div style={{ textAlign: "center" }}>
                 <div style={{ color: C.textMuted, fontSize: 10, fontWeight: 800, marginBottom: 4 }}>TP 2 (1:2)</div>
-                <div style={{ color: C.buy, fontSize: 18, fontWeight: 800 }}>{tpsl.tp2?.toFixed(2) ?? "N/A"}</div>
+                <div style={{ color: C.buy, fontSize: "clamp(13px, 3.5vw, 18px)", fontWeight: 800 }}>{tpsl.tp2?.toFixed(2) ?? "N/A"}</div>
               </div>
             </div>
           </div>
@@ -474,7 +478,7 @@ function QiPrimeDashboard() {
                {/* MOBILE LAYOUT: Gauge | (RSI over Price) */}
                <div className="flex md:hidden" style={{ alignItems: "center", justifyContent: "center", gap: 12, width: "100%" }}>
                  <div style={{ background: sigBg, borderRadius: "50%", padding: 6, flexShrink: 0 }}>
-                   <CircularGauge score={score.ai_score} maxScore={90} color={sigColor} />
+                   <CircularGauge score={score.ai_score} maxScore={100} color={sigColor} />
                  </div>
 
                  <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1, minWidth: 0 }}>
@@ -495,7 +499,7 @@ function QiPrimeDashboard() {
               {/* DESKTOP LAYOUT: Gauge + Last Update */}
               <div className="hidden md:flex" style={{ flexDirection: "column", alignItems: "center", gap: 12 }}>
                 <div style={{ background: sigBg, borderRadius: "50%", padding: 8 }}>
-                  <CircularGauge score={score.ai_score} maxScore={90} color={sigColor} />
+                  <CircularGauge score={score.ai_score} maxScore={100} color={sigColor} />
                 </div>
                 <div style={{
                   background: C.surfaceMuted, border: `1px solid ${C.borderSoft}`,
@@ -594,17 +598,17 @@ function QiPrimeDashboard() {
             </Section>
 
             {/* AI Score Breakdown moved here for vertical balance */}
-            <Section title={`AI SCORE BREAKDOWN — ${score.ai_score}/90`}>
+            <Section title={`AI SCORE BREAKDOWN — ${score.ai_score}/100`}>
               <ScoreBar label="L2 · RSI Momentum" score={bd.l2 ?? 0} max={20} color={C.accent} />
               <ScoreBar label="L3 · Stochastic Trigger" score={bd.l3 ?? 0} max={30} color={C.amber} />
               <ScoreBar label="L4 · Flow / Delta / Power" score={bd.l4 ?? 0} max={40} color={sigColor} />
               <div style={{ marginTop: 12, borderTop: `1px solid ${C.borderSoft}`, paddingTop: 10 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
                   <span style={{ color: C.text, fontWeight: 700, fontSize: 12 }}>TOTAL</span>
-                  <span style={{ color: sigColor, fontWeight: 800, fontSize: 14 }}>{score.ai_score}/90</span>
+                  <span style={{ color: sigColor, fontWeight: 800, fontSize: 14 }}>{score.ai_score}/100</span>
                 </div>
                 <div style={{ background: C.surfaceMuted, borderRadius: 999, height: 8, overflow: "hidden" }}>
-                  <div style={{ width: `${(score.ai_score / 90) * 100}%`, height: "100%",
+                  <div style={{ width: `${(score.ai_score / 100) * 100}%`, height: "100%",
                                 background: sigColor, borderRadius: 999, transition: "width 0.6s ease" }} />
                 </div>
               </div>
